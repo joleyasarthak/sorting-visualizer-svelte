@@ -1,17 +1,32 @@
 <script>
-  import { bubbleSort } from "../algos/bubbleSort";
   import { flip } from "svelte/animate";
-  import { selectionSort } from "../algos/selectionSort";
-  import { insertionSort } from "../algos/insertionSort";
-  import { heapSort } from "../algos/heapSort";
+  import {
+    insertionSort,
+    bubbleSort,
+    selectionSort,
+    heapSort,
+  } from "../algos/algoExports";
   export let n = 10; //init size
   let lengths;
   let success = false;
   $: lengths = [...Array(n)].map((e) => Math.floor(Math.random() * 351) + 150);
   let toSwap = []; //global state for styling
-  export function sort() {
-    let swaps = heapSort(lengths); //change algo here
-    console.log(swaps);
+  export function sort(algo) {
+    let swaps;
+    if (algo == "insertion") {
+      swaps = insertionSort(lengths);
+    } else if (algo == "selection") {
+      swaps = selectionSort(lengths);
+    } else if (algo == "bubble") {
+      swaps = bubbleSort(lengths);
+    } else if (algo == "merge") {
+      swaps = [];
+    } else if (algo == "heap") {
+      swaps = heapSort(lengths);
+      swaps.map(([i, j]) => {
+        console.log(i, j);
+      });
+    }
     animate(swaps);
   }
   function animate(swaps) {
@@ -25,14 +40,14 @@
     [lengths[j], lengths[i]] = [lengths[i], lengths[j]];
     setTimeout(() => {
       animate(swaps);
-    }, 100);
+    }, 200);
   }
 </script>
 
 <div class="bars">
   {#each lengths as length, i (i)}
     <div
-      animate:flip={{ duration: 50 }}
+      animate:flip={{ duration: 100 }}
       class="bar"
       style="height: {length}px; 
       background-color: {toSwap[0] == i || toSwap[1] == i ? 'red' : 'white'};
